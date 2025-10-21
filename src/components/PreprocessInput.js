@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ * A textarea input component used for editing the raw text
+ * before preprocessing. Controlled via 'value' and 'onChange'.
+ */
+
 const PreprocessInput = ({ value, onChange }) => (
     <div class="col-md-8"
         style={{ maxHeight: "50vh", overflowY: "auto"}}>
