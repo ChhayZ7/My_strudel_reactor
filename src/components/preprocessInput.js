@@ -5,20 +5,23 @@ import React from "react";
  * before preprocessing. Controlled via 'value' and 'onChange'.
  */
 
-const PreprocessInput = ({ value, onChange }) => (
-    <div class="col-md-8"
-        style={{ maxHeight: "50vh", overflowY: "auto"}}>
-            <label>
-                Text to preprocess:
-            </label>
-            <textarea
-                id="proc"
-                class="form-control"
-                rows={15}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-            />
-    </div>
-);
+
+function PreprocessInput ({ value, onChange }){
+    return (
+        <div class="col-md-8"
+            style={{ maxHeight: "50vh", overflowY: "auto"}}>
+                <label>
+                    Text to preprocess:
+                </label>
+                <textarea
+                    id="proc"
+                    class="form-control"
+                    rows={15}
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                />
+        </div>
+    );
+}
 
 export default PreprocessInput;
