@@ -10,6 +10,7 @@
     "@strudel/soundfonts": "^1.2.5",
     "@strudel/tonal": "^1.2.4",
     "@strudel/transpiler": "^1.2.4",
+    "@strudel/web": "^1.2.5",
     "@strudel/webaudio": "^1.2.5",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -18,7 +19,7 @@
     "bootstrap": "^5.3.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
