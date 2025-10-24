@@ -7,6 +7,7 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
 import PreprocessInput from '../components/preprocessInput';
+import Tranport from '../components/transport';
 
 // let globalEditor = null;
 
@@ -56,6 +57,7 @@ export default function App(){
       {/* Top section text input and transport buttons */}
       <div class="row">
         <PreprocessInput value={rawText} onChange={setRawText}/>
+        <Tranport/>
       </div>
     </main>
   </div>
