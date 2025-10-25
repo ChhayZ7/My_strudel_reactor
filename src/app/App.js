@@ -57,9 +57,19 @@ export default function App(){
       {/* Top section text input and transport buttons */}
       <div class="row">
         <PreprocessInput value={rawText} onChange={setRawText}/>
-        <Tranport/>
+        <Tranport
+          onPreprocess={handlePreprocess}
+          onProcPlay={handleProcPlay}
+          onPlay={evaluate}
+          onStop={stop}
+          disabled={!ready}/>
       </div>
     </main>
+
+    {/* Bottom section: editor + hush toggle */}
+    <div className="row mt-3">
+      <EditorPane/>
+    </div>
   </div>
   )
 }
