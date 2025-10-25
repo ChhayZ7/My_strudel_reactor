@@ -8,6 +8,7 @@ import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
 import PreprocessInput from '../components/preprocessInput';
 import Tranport from '../components/transport';
+import EditorPane from '../components/editorPane';
 
 // let globalEditor = null;
 
@@ -68,7 +69,7 @@ export default function App(){
 
     {/* Bottom section: editor + hush toggle */}
     <div className="row mt-3">
-      <EditorPane/>
+      <EditorPane mountRef={mountRef}/>
     </div>
   </div>
   )
