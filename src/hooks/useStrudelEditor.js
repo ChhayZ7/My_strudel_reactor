@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import {
-    initStrudel,
-    evalScope,
-    getAudioContext,
-    webaudioOutput,
-    registerSynthSounds,
-    initAudioOnFirstClick,
-    transpiler,
-} from "@strudel/web"
-import { StrudelMirror } from "@strudel/codemirror"
+import '../assets/App.css';
+import { StrudelMirror } from '@strudel/codemirror';
+import { evalScope } from '@strudel/core';
+import { initAudioOnFirstClick } from '@strudel/webaudio';
+import { transpiler } from '@strudel/transpiler';
+import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
-import { time } from "@strudel/core";
+import { stranger_tune } from '../app/tunes';
 
 /**
  * Custom React hook that sets up and controls a Strudle editor instance
@@ -37,7 +33,6 @@ export function useStrudelEditor(options = {}){
     useEffect(() => {
         let cancelled = false;
         (async () => {
-            await initStrudel();
             if (cancelled) return;
 
             // If a canvas is provided, prep 2x scale and a 2D context
