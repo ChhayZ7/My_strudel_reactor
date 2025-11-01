@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+#strudelCanvas {
+  display: block;
+  width: 100%;
+  height: 320px;     /* make it tall enough to see */
+  background: #111;  /* dark so notes pop */
+  border: 1px solid #333;
+  margin-top: 1rem;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

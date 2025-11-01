@@ -7,8 +7,8 @@ function HushToggle({hush, onChange}){
                 <input
                     className="form-check-input"
                     type="radio"
-                    name="flexRadioDefault"
-                    id="flexRadioDefault1"
+                    name="p1_mode"
+                    id="p1_on"
                     onChange={() => onChange(false)}
                     checked={!hush}
                 />
@@ -20,8 +20,8 @@ function HushToggle({hush, onChange}){
                 <input
                     className="form-check-input"
                     type="radio"
-                    name="flexRadioDefault"
-                    id="flexRadioDefault2"
+                    name="p1_mode"
+                    id="p1_hush"
                     onChange={() => onChange(true)}
                     checked={hush}
                 />
