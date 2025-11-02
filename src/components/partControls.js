@@ -1,6 +1,17 @@
 import PartControl from './partControl';
+import React from "react";
 
 function PartControls({ parts, partStates, onChange, disabled}){
+    if ( parts.length === 0 ){
+        return (
+            <div>
+                <h5>Part Controls</h5>
+                <div className="alert alert-info">
+                    No parts detected. Use <code>&lt;part:name&gt;...&lt;/part:name&gt;</code> tags to define parts.
+                </div>
+            </div>
+        )
+    }
     return (
         <div>
             <h5>Part Controls</h5>
