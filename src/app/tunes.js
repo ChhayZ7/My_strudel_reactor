@@ -7,7 +7,7 @@ samples('https://raw.githubusercontent.com/Mittans/tidal-drum-machines/main/mach
 const gain_patterns = [
   "2",
   "{0.75 2.5}*4",
-    "{0.75 2.5!9 0.75 2.5!5 0.75 2.5 0.75 2.5!7 0.75 2.5!3 <2.5 0.75> 2.5}%16",
+  "{0.75 2.5!9 0.75 2.5!5 0.75 2.5 0.75 2.5!7 0.75 2.5!3 <2.5 0.75> 2.5}%16",
 ]
 
 const drum_structure = [
@@ -35,10 +35,10 @@ const arpeggiator2 = [
 "{d5 bb4 g4 d4 bb3 g3 d4 bb3 eb3 d3 bb2 eb2}%16",
 ]
 
-
 const pattern = 0
 const bass = 0
 
+<part:bassline>
 bassline:
 note(pick(basslines, bass))
 .sound("supersaw")
@@ -47,9 +47,10 @@ note(pick(basslines, bass))
 .lpf(700)
 .room(0.4)
 .postgain(pick(gain_patterns, pattern))
+</part:bassline>
 
-
-<p1_Radio>main_arp:
+<part:arp>
+main_arp:
 note(pick(arpeggiator1, "<0 1 2 3>/2"))
 .sound("supersaw")
 .lpf(300)
@@ -57,8 +58,9 @@ note(pick(arpeggiator1, "<0 1 2 3>/2"))
 .room(0.6)
 .lpenv(3.3)
 .postgain(pick(gain_patterns, pattern))
+</part:arp>
 
-
+<part:drums>
 drums:
 stack(
   s("tech:5")
@@ -76,7 +78,9 @@ stack(
   .bank("[KorgDDM110, OberheimDmx]").speed(1.2)
   .postgain(.25),
 )
+</part:drums>
 
+<part:drums2>
 drums2: 
 stack(
   s("[~ hh]*4").bank("RolandTR808").room(0.3).speed(0.75).gain(1.2),
@@ -93,8 +97,7 @@ stack(
   .speed(0.5)
   .rarely(jux(rev)),
 )
-//Remixed and reproduced from Algorave Dave's code found here: https://www.youtube.com/watch?v=ZCcpWzhekEY
-// all(x => x.gain(mouseX.range(0,1)))
-// all(x => x.log())
+</part:drums2>
 
-// @version 1.2`;
+//Remixed and reproduced from Algorave Dave's code found here: https://www.youtube.com/watch?v=ZCcpWzhekEY
+`;

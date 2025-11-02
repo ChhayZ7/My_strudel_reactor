@@ -1,40 +1,19 @@
 import '../assets/cors-redirect';
 import '../assets/App.css';
-import { useEffect, useRef, useMemo, useState, useCallback } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback, use } from "react";
 import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
 import PreprocessInput from '../components/preprocessInput';
 import Tranport from '../components/transport';
 import EditorPane from '../components/editorPane';
-import HushToggle from '../components/hushToggle';
+import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
+import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {
   console.log(event.detail);
 };
-
-
-// Helper functions
-function detectParts(tune){
-  const partRegex = /<part:(\w+)>([\s\S]*?)<\/part:\1>/g;
-  const parts = [];
-  let match;
-
-  while ((match = partRegex.exec(tune)) !== null) {
-    parts.push({
-      name: match[1],
-      fullMatch: match[0],
-      content: match[2]
-     });
-  }
-
-  return parts;
-}
-function preprocess(text, partState){
-  // const replacement = hush ? "_" : "";
-  // return text.replaceAll("<p1_Radio>", replacement);
-}
 
 export default function App(){
   const canvasRef = useRef(null);
@@ -45,9 +24,24 @@ export default function App(){
   });
 
   const [rawText, setRawText] = useState("");
-  const [hush, setHush] = useState(false);
+  const [partStates, setPartStates] = useState({});
 
-  const processed = useMemo(() => preprocess(rawText, hush), [rawText, hush]);
+  // Detect parts from raw text
+  const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
+
+    // Preprocess code based on part states
+  const processed = useMemo(() => {
+    return preprocess(rawText, partStates);
+  }, [rawText, partStates]);
+
+  // Initialize part states when parts change
+  useEffect(() => {
+    const newStates = {};
+    detectedParts.forEach(part => {
+      newStates[part.name] = partStates[part.name] || 'on';
+    });
+    setPartStates(newStates);
+  }, [detectParts]);
 
   const handlePreprocess = useCallback(() => {
     if (!ready) return;
@@ -59,30 +53,44 @@ export default function App(){
   const handleProcPlay = useCallback(() => {
     if (!ready) return;
     if(!processed.trim()) return;
+    console.log(processed);
     setCode(processed);
     setTimeout(() => evaluate(), 0);
+    console.log("Process and Play");
   }, [ready, processed, setCode, evaluate]);
 
-  const handleHushToggle = useCallback((newHushState) => {
+  const handlePartStateChange = useCallback((partName, newState) => {
     const wasPlaying = isStarted();
-    setHush(newHushState);
 
+    setPartStates(prev => ({
+      ...prev,
+      [partName]: newState
+    }));
+
+    // If playing, restart with new part configuration
     if (wasPlaying){
       stop();
       setTimeout(() => {
-        const newProcessed = preprocess(rawText, newHushState); // use for testing purpose only (to be changed later)
+        const newProcessed = preprocess(rawText, {
+          ...partStates,
+          [partName]: newState
+        });
         setCode(newProcessed);
         setTimeout(() => evaluate(), 50);
       }, 50);
     }
-  }, [isStarted, stop, setCode, evaluate, rawText]);
+  }, [isStarted, stop, setCode, evaluate, rawText, partStates]); 
 
+
+
+  // Initialize raw text with default tune if empty
   useEffect(() => {
     if (!ready) return;
 
     if (rawText === "") setRawText(prev => (prev === "" ? stranger_tune : prev));
   }, [ready, rawText]);
 
+  // Update editor when processed code changes
   useEffect(() => {
     if (!ready) return;
     setCode(processed);
@@ -108,7 +116,12 @@ export default function App(){
 
     <div className="row mt-3">
       <EditorPane mountRef={mountRef}/>
-      <HushToggle hush={hush} onChange={handleHushToggle}/>
+      <PartControls
+        parts={detectedParts}
+        partStates={partStates}
+        onChange={handlePartStateChange}
+        disabled={!ready}
+      />
     </div>
     <canvas ref={canvasRef} id="strudelCanvas"></canvas>
   </div>

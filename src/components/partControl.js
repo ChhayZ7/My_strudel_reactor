@@ -46,7 +46,7 @@ function PartControl ({ partName, state, onChange, disabled }){
                         onChange={() => onChange(partName, 'solo')}
                         disabled={disabled}
                     />
-                    <label  className="btn btn-outline-warning btn-sm" htmlFor={`${partName}_hush`}>
+                    <label  className="btn btn-outline-warning btn-sm" htmlFor={`${partName}_solo`}>
                         SOLO
                     </label>
                 </div>

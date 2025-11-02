@@ -6,7 +6,7 @@ function PartControls({ parts, partStates, onChange, disabled}){
             <h5>Part Controls</h5>
             {parts.map(part => (
                 <PartControl
-                    key={partname}
+                    key={part.name}
                     partName={part.name}
                     state={partStates[part.name] || 'on'}  
                     onChange={onChange}
