@@ -41,7 +41,7 @@ export default function App(){
       newStates[part.name] = partStates[part.name] || 'on';
     });
     setPartStates(newStates);
-  }, [detectParts]);
+  }, [detectedParts]);
 
   const handlePreprocess = useCallback(() => {
     if (!ready) return;
