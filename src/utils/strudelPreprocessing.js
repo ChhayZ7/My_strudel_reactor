@@ -1,4 +1,4 @@
-// Helper functions
+// Helper functions for Strudel code preprocessing with part management
 
 // Extract all parts from the tune's code
 export function detectParts(code) {
@@ -38,11 +38,20 @@ export function preprocess(code, partStates) {
       processed = processed.replace(partRegex, (match, content) => {
         // If something is soloed
         if (hasSolo) {
-          return state === 'solo' ? content : '_';
+          if (state === 'solo') {
+            return content;
+          } else {
+            // Comment out the entire section
+            return content.split('\n').map(line => `// ${line}`).join('\n');
+          }
         }
         
         // No solo active, respect individual states
-        return state === 'hush' ? '_' : content;
+        if (state === 'hush') {
+          return content.split('\n').map(line => `// ${line}`).join('\n');
+        } else {
+          return content;
+        }
       });
     });
     
