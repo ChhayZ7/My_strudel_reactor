@@ -15,10 +15,25 @@ const handleD3Data = (event) => {
 };
 
 
-// Helper function
-function preprocess(text, hush){
-  const replacement = hush ? "_" : "";
-  return text.replaceAll("<p1_Radio>", replacement);
+// Helper functions
+function detectParts(tune){
+  const partRegex = /<part:(\w+)>([\s\S]*?)<\/part:\1>/g;
+  const parts = [];
+  let match;
+
+  while ((match = partRegex.exec(tune)) !== null) {
+    parts.push({
+      name: match[1],
+      fullMatch: match[0],
+      content: match[2]
+     });
+  }
+
+  return parts;
+}
+function preprocess(text, partState){
+  // const replacement = hush ? "_" : "";
+  // return text.replaceAll("<p1_Radio>", replacement);
 }
 
 export default function App(){
