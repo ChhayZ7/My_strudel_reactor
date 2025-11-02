@@ -1,3 +1,4 @@
+import React from "react";
 function PartControl ({ partName, state, onChange, disabled }){
     const displayName = partName.charAt(0).toUpperCase() + partName.slice(1);
 
@@ -10,7 +11,7 @@ function PartControl ({ partName, state, onChange, disabled }){
                 <div>
                     <input
                         type="radio"
-                        className="btn-check"
+                        className="btn-check p-2"
                         name={`part_${partName}`}
                         id={`${partName}_on`}
                         autoComplete="off"
@@ -32,7 +33,7 @@ function PartControl ({ partName, state, onChange, disabled }){
                         onChange={() => onChange(partName, 'hush')}
                         disabled={disabled}
                     />
-                    <label  className="btn btn-outline-success btn-sm" htmlFor={`${partName}_hush`}>
+                    <label  className="btn btn-outline-secondary btn-sm" htmlFor={`${partName}_hush`}>
                         HUSH
                     </label>
 

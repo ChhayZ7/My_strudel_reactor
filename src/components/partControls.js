@@ -13,7 +13,7 @@ function PartControls({ parts, partStates, onChange, disabled}){
         )
     }
     return (
-        <div>
+        <div className="col-md-4">
             <h5>Part Controls</h5>
             {parts.map(part => (
                 <PartControl
