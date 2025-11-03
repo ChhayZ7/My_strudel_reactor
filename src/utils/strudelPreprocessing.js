@@ -35,7 +35,7 @@ export function preprocess(code, partStates) {
         'g'
       );
       
-      processed = processed.replace(partRegex, (match, content) => {
+      processed = processed.replace(partRegex, (_, content) => {
         // If something is soloed
         if (hasSolo) {
           if (state === 'solo') {
