@@ -9,6 +9,7 @@ import EditorPane from '../components/editorPane';
 import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
+import TempoControl from '../components/tempoControl';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {
@@ -104,25 +105,26 @@ export default function App(){
       {/* Top section text input and transport buttons */}
       <div className="row">
         <PreprocessInput value={rawText} onChange={setRawText}/>
+        <div className='col-4'>
         <Tranport
           onPreprocess={handlePreprocess}
           onProcPlay={handleProcPlay}
           onPlay={evaluate}
           onStop={stop}
           disabled={!ready}/>
+          <TempoControl />
+        </div>
       </div>
-    </main>
-
-
-    <div className="row mt-3">
-      <EditorPane mountRef={mountRef}/>
-      <PartControls
-        parts={detectedParts}
-        partStates={partStates}
-        onChange={handlePartStateChange}
-        disabled={!ready}
-      />
+      <div className="row mt-3">
+        <EditorPane mountRef={mountRef}/>
+        <PartControls
+          parts={detectedParts}
+          partStates={partStates}
+          onChange={handlePartStateChange}
+          disabled={!ready}
+        />
     </div>
+    </main>
     <canvas ref={canvasRef} id="strudelCanvas"></canvas>
   </div>
   )
