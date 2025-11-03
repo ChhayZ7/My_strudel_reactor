@@ -10,6 +10,7 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
+import { set } from '@strudel/core';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {
@@ -26,6 +27,7 @@ export default function App(){
 
   const [rawText, setRawText] = useState("");
   const [partStates, setPartStates] = useState({});
+  const [bpm, setBpm] = useState(140); // Default BPM
 
   // Detect parts from raw text
   const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
@@ -82,7 +84,46 @@ export default function App(){
     }
   }, [isStarted, stop, setCode, evaluate, rawText, partStates]); 
 
+  const handleBpmChange = useCallback((newBpm) => {
+    const wasPlaying = isStarted();
+    setBpm(newBpm);
 
+    const cps = (newBpm / 60 /4).toFixed(6); // Convert BPM to cycles per second
+
+    const updatedCode = rawText.replace(
+      /setcps\([^)]+\)/g,
+      `setcps(${newBpm}/60/4)`  
+    );
+
+    setRawText(updatedCode);
+
+    if(wasPlaying){
+      stop();
+      setTimeout(() => {
+      const processedWithNewTempo = preprocess(updatedCode, partStates);
+      setCode(processedWithNewTempo);
+      setTimeout(() => evaluate(), 50);}, 50);
+    } else {
+      const processedWithNewTempo = preprocess(updatedCode, partStates);
+      setCode(processedWithNewTempo);
+    }
+  }, [rawText, partStates, setCode, isStarted, stop, evaluate]);
+
+  // Extract BPM from raw text when it changes
+  useEffect(() => {
+    const match = rawText.match(/setcps\(([^)]+)\)/);
+    if(match){
+      const cpsValue = eval(match[1]);
+      console.log("Extracted CPS:", cpsValue);
+      if(!isNaN(cpsValue)){
+        const extractedBpm = cpsValue * 60 *4; // Convert CPS back to BPM
+        if (Math.abs(extractedBpm - bpm) > 0.1){
+          console.log("Updating BPM to:", extractedBpm);
+          setBpm(extractedBpm);
+      }
+    }
+  }
+}, [rawText, bpm]);
 
   // Initialize raw text with default tune if empty
   useEffect(() => {
@@ -112,7 +153,11 @@ export default function App(){
           onPlay={evaluate}
           onStop={stop}
           disabled={!ready}/>
-          <TempoControl />
+          <TempoControl 
+            bpm={bpm}
+            onBpmChange={handleBpmChange}
+            disabled={!ready}
+          />
         </div>
       </div>
       <div className="row mt-3">
