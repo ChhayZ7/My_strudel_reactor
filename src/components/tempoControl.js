@@ -1,25 +1,31 @@
-import React, { useState, useCallback} from "react";
+import React, { useState, useCallback, useEffect} from "react";
 
 function TempoControl({ bpm, onBpmChange, disabled = false }){
     const [activeInput, setActiveInput] = useState('bpm');
 
-    const cps = (bpm / 60/ 4).toFixed(3);
+    const [localBpm, setLocalBpm] = useState(bpm);
 
-    const handleBpmChange = useCallback((e) => {
-        const value = parseFloat(e.target.value);
-        if(!isNaN(value) && value > 0){
+    // Update local values when prop changes
+    useEffect(() => {
+        setLocalBpm(bpm);
+    }, [bpm]);
+
+    // Handle BPM input change
+       const handleBpmInputChange = useCallback((e) => {
+        setLocalBpm(e.target.value);
+    }, []);
+
+    // Apply BPM change
+    const applyBpmChange = useCallback(() => {
+        const value = parseFloat(localBpm);
+        if (!isNaN(value) && value >= 20 && value <= 300) {
             onBpmChange(value);
+        } else {
+            setLocalBpm(bpm); // Reset to current bpm if invalid
+            alert("Please enter a BPM value between 20 and 300."); // To be change to a modal
         }
-    }, [onBpmChange]);
-
-    // Handle CPS input change
-    const handleCpsChange = useCallback((e) => {
-        const value = parseFloat(e.target.value);
-        if (!isNaN(value) && value > 0){
-            onBpmChange(value * 60 * 4);
-        }
-    }, [onBpmChange]);
-
+    }, [localBpm, onBpmChange, bpm]);
+    
     // Increment/Decrement handlers
     const adjustBpm = useCallback((delta) => {
         const newBpm = Math.max(20, Math.min(300, bpm + delta));
@@ -40,12 +46,11 @@ function TempoControl({ bpm, onBpmChange, disabled = false }){
                     <input
                         type="number"
                         className="form-control"
-                        value={Math.round(bpm)}
-                        onChange={handleBpmChange}
+                        value={localBpm}
+                        onChange={handleBpmInputChange}
                         onFocus={() => setActiveInput('bpm')}
+                        onKeyDown={(e) => e.key === 'Enter' && applyBpmChange()}
                         disabled={disabled}
-                        min="20"
-                        max="300"
                         step="1"
                     />
                     <button
@@ -55,36 +60,12 @@ function TempoControl({ bpm, onBpmChange, disabled = false }){
                     >
                         +
                     </button>
-                </div>
-            </div>
-
-            <div>
-                <label>CPS</label>
-                <div>
                     <button
-                        className="btn btn-outline-warning btn-sm"
-                        onClick={() => adjustBpm(-60)}
-                        disabled={disabled || bpm <= 20}
-                    >
-                        -
-                    </button>
-                    <input
-                        type="number"
-                        className="form-control"
-                        value={cps}
-                        onChange={handleCpsChange}
-                        onFocus={() => setActiveInput('cps')}
+                        className="btn btn-primary btn-sm mx-2"
+                        onClick={applyBpmChange}
                         disabled={disabled}
-                        min="0.33"
-                        max="5"
-                        step="0.1"
-                    />
-                    <button
-                        className="btn btn-outline-success btn-sm"  
-                        onClick={() => adjustBpm(60)}
-                        disabled={disabled || bpm >= 300}
                     >
-                        +
+                        Set
                     </button>
                 </div>
             </div>
