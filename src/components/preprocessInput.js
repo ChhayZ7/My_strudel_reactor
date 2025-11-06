@@ -14,7 +14,7 @@ function PreprocessInput ({ value, onChange }){
                 </label>
                 <textarea
                     id="proc"
-                    class="form-control"
+                    className="form-control"
                     rows={15}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}

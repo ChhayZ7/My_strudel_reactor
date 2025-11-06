@@ -6,7 +6,7 @@ function PartControl ({ partName, state, onChange, disabled }){
         <div className="part-control-card">
             <div>
                 <h6>
-                    {displayName === 'Arp' ? '🎹' : displayName === 'Bassl' ? '🎸' : '🥁'} {displayName}:
+                    {displayName === 'Arp' ? '🎹' : displayName === 'Bassline' ? '🎸' : '🥁'} {displayName}:
                 </h6>
                 <div>
                     <input

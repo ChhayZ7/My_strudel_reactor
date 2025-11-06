@@ -41,13 +41,13 @@ export default function App(){
   }, [rawText, partStates]);
 
   // Initialize part states when parts change
-  useEffect(() => {
-    const newStates = {};
-    detectedParts.forEach(part => {
-      newStates[part.name] = partStates[part.name] || 'on';
-    });
-    setPartStates(newStates);
-  }, [detectedParts]);
+  // useEffect(() => {
+  //   const newStates = {};
+  //   detectedParts.forEach(part => {
+  //     newStates[part.name] = partStates[part.name] || 'on';
+  //   });
+  //   setPartStates(newStates);
+  // }, [detectedParts]);
 
   const handlePreprocess = useCallback(() => {
     if (!ready) return;
@@ -84,7 +84,9 @@ export default function App(){
   const handlePartStateChange = useCallback((partName, newState) => {
     if(isUpdatingRef.current) return;
     setPartStates(prev => {
-      const newStates = { ...prev, [partName]: newState
+      const newStates = {
+        ...prev,
+        [partName]: newState
     };
 
     // If playing, restart with new part configuration
@@ -176,7 +178,7 @@ export default function App(){
       {/* Top section text input and transport buttons */}
       <div className="row">
         <div class="col-8">
-          <div class="panel">
+          <div className="panel">
             <PreprocessInput value={rawText} onChange={setRawText}/>
           </div>
         </div>
