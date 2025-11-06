@@ -1,3 +1,18 @@
+:root {
+  --neon-cyan: #00f3ff;
+  --neon-magenta: #ff00ff;
+  --neon-yellow: #fffc00;
+  --neon-pink: #ff006e;
+  --neon-blue: #3a86ff;
+  --dark-bg: #0a0a0f;
+  --panel-bg: #1a1a24;
+  --panel-border: #2a2a3a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0b0;
+  --input-bg: #15151f;
+  --hover-glow: rgba(0, 243, 255, 0.3);
+}
+
 .App {
   text-align: center;
 }
@@ -13,7 +28,7 @@
   }
 }
 
-.App-header {
+/* .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -22,19 +37,10 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
+} */
 
 .App-link {
   color: #61dafb;
-}
-
-#strudelCanvas {
-  display: block;
-  width: 100%;
-  height: 320px;     /* make it tall enough to see */
-  background: #111;  /* dark so notes pop */
-  border: 1px solid #333;
-  margin-top: 1rem;
 }
 
 @keyframes App-logo-spin {
@@ -44,4 +50,335 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.text-white, .text-light, .navbar-dark h2, .dark-theme h2 {
+  color: #fff !important;
+}
+
+/* Global Styles */
+body {
+  background: linear-gradient(135deg, var(--dark-bg) 0%, #1a0a1f 100%);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+h2, h5, h6 {
+  color: var(--neon-cyan) !important;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Main Container */
+.container-fluid{
+  padding: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Panel Styling */
+.col-md-8, .col-md-4, .col-4 {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  margin-bottom: 15px;
+}
+
+/* Input/textarea Styling */
+textarea.form-control,
+input.form-control {
+  background-color: var(--input-bg);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-family: 'Courier New', Courier, monospace;
+  transition: all 0.3s ease;
+}
+
+textarea.form-control:focus,
+input.form-control:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+textarea.form-control{
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Button Styling: Primary Transport Buttons */
+.btn.btn-outline-primary {
+  background: linear-gradient(145deg, var(--panel-bg), var(--input-bg));
+  border: 2px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--hover-glow);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-outline-primary:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn.btn-outline-primary:hover {
+  background: linear-gradient(145deg, var(--panel-border), var(--input-bg));
+  border-color: var(--neon-cyan);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px var(--hover-glow),
+    inset 0 0px 20px rgba(0, 243, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn.btn-outline-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 0px 10px rgba(0, 243, 255, 0.8);
+}
+
+/* Success Buttons (ON state) */
+.btn-outline-success {
+  background: linear-gradient(145deg, var(--panel-bg), var(--input-bg));
+  border: 2px solid #00ff88;
+  color: #00ff88;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
+  background: linear-gradient(145deg, #1a2a1f, #152015);
+  border-color: #00ff88;
+  color: var(--text-primary);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+/* Secondary Buttons (HUSH State) */
+.btn-outline-secondary {
+  background: linear-gradient(145deg, var(--panel-bg), var(--input-bg));
+  border: 2px solid #666;
+  color: #999;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  border-color: #999;
+  color: #ccc;
+  box-shadow: 0 0 10px rgba(136, 136, 136, 0.4);
+}
+
+/* Warning Buttons (SOLO State) */
+.btn-outline-warning {
+  background: linear-gradient(145deg, var(--panel-bg), var(--input-bg));
+  border: 2px solid var(--neon-yellow);
+  color: var(--neon-yellow);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-warning:hover {
+  border-color: var(--neon-yellow);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 252, 0, 0.6);
+}
+
+/* Small buttons */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  margin: 2px
+}
+
+/* Button Grid Gap */
+.d-grid {
+  gap: 10px;
+}
+
+/* Canvas Styling */
+#strudelCanvas {
+  display: block;
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(180deg, var(--dark-bg), var(--input-bg) 100%);
+  border: 2px solid var(--neon-cyna);
+  border-radius: 8px;
+  margin-top: 1rem;
+  box-shadow: 0 0 30px var(--hover-glow),
+    inset 0 0 50px rgba(0, 243, 255, 0.05);
+}
+
+/* Editor Pane Styling */
+.col-md-8 > div:has(> .cm-editor) {
+  border: 2px solid var(--neon-pink);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 0, 255, 0.2);
+}
+
+/* Label */
+label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Number Input Styling */
+input[type="number"] {
+  -moz-appearance: textfield;
+  background: var(--input-bg);
+  border: 2px solid var(--panel-border);
+  color: var(--neon-cyan);
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.2rem;
+  width: 80px;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+input[type="number"]:focus {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Radio Button Styling */
+.btn-check:checked + .btn-outline-success {
+  background: linear-gradient(145deg, #00ff88, #00cc70);
+  border-color: #00ff88;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+}
+
+.btn-check:checked + .btn-outline-warning {
+  background: linear-gradient(145deg, var(--neon-yellow), #f0e000);
+  border-color: var(--neon-yellow);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 252, 0, 0.8);
+}
+
+.btn-check:checked + .btn-outline-secondary {
+  background: #444;
+  border-color: #666;
+  color: var(--text-primary);
+}
+
+/* Alert Styling */
+.alert-info {
+  background-color: linear-gradient(145deg, var(--panel-bg), var(--input-bg));
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-cyan);
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(58, 134, 255, 0.5);
+}
+
+/* Code Tag */
+code {
+  background: var(--input-bg);
+  color: var(--neon-magenta);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid var(--panel-border);
+}
+
+/* List Styling */
+ul {
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+ul li strong {
+  color: var(--neon-cyan);
+}
+
+strong {
+  color: var(--neon-yellow);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar{
+  width: 10px;
+  height: 10px
+}
+
+::-webkit-scrollbar-track{
+  background: var(--dark-bg);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb{
+  background: var(--neon-cyan);
+  border-radius: 5px;
+  border: 2px solid var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+/* Hover Effects for All Panels */
+.col-md-8:hover, .col-md-4:hover, .col-4:hover {
+  border-color: var(--hover-glow);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(0, 243, 255, 0.1);
+}
+
+/* Part Controls Section */
+.col-md-4 h6{
+  color: var(--neon-magenta);
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+/* Disabled State */
+button.disabled{
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Animation for page title */
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px var(0, 243, 255, 0.5), 0 0 30px var(0, 243, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 243, 255, 0.8), 0 0 30px rgba(0, 243, 255, 0.5),0 0 40px rgba(0, 243, 255, 0.3);
+  }
+}
+
+h2{
+  animation: neon-pulse 2s ease-in-out infinite;
 }

@@ -1,5 +1,6 @@
 import '../assets/cors-redirect';
 import '../assets/App.css';
+import '../assets/Component.css';
 import { useEffect, useRef, useMemo, useState, useCallback, use } from "react";
 import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
@@ -10,7 +11,6 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
-import { e, set } from '@strudel/core';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {

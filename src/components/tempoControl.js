@@ -32,7 +32,7 @@ function TempoControl({ bpm, onBpmChange, disabled = false }){
         onBpmChange(newBpm);
     }, [bpm, onBpmChange]);
     return(
-        <div>
+        <div className="tempo-control-wrapper">
             <div>
                 <label>BPM</label>
                 <div>
@@ -61,7 +61,7 @@ function TempoControl({ bpm, onBpmChange, disabled = false }){
                         +
                     </button>
                     <button
-                        className="btn btn-primary btn-sm mx-2"
+                        className="btn btn-outline-primary btn-sm mx-2"
                         onClick={applyBpmChange}
                         disabled={disabled}
                     >

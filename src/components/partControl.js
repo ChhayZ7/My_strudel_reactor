@@ -3,10 +3,10 @@ function PartControl ({ partName, state, onChange, disabled }){
     const displayName = partName.charAt(0).toUpperCase() + partName.slice(1);
 
     return (
-        <div>
+        <div className="part-control-card">
             <div>
                 <h6>
-                    {displayName === 'Arp' ? 'PianoEmoji' : displayName === 'Bassline' ? 'BassEmoji' : 'DrumEmoji'} {displayName}:
+                    {displayName === 'Arp' ? '🎹' : displayName === 'Bassl' ? '🎸' : '🥁'} {displayName}:
                 </h6>
                 <div>
                     <input
