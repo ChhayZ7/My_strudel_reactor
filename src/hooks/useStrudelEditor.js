@@ -100,7 +100,10 @@ export function useStrudelEditor(options = {}){
         editorRef.current.stop();
         editorRef.current.setCode("");
     }, []);
+    const hasCode = useCallback(() => {
+        return !!editorRef.current?.view?.state?.doc?.toString()?.trim();
+    }, [])
 
     // Expose refs and control functions to the parent component
-    return { mountRef, ready, setCode, evaluate, stop, reset, isStarted};
+    return { mountRef, ready, setCode, evaluate, stop, hasCode , isStarted};
 }

@@ -10,7 +10,7 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
-import { set } from '@strudel/core';
+import { e, set } from '@strudel/core';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {
@@ -20,7 +20,7 @@ const handleD3Data = (event) => {
 export default function App(){
   const canvasRef = useRef(null);
 
-  const { mountRef, ready, setCode, evaluate, stop, reset, isStarted } = useStrudelEditor({
+  const { mountRef, ready, setCode, evaluate, stop, hasCode, isStarted } = useStrudelEditor({
     canvasRef,
     drawTime: [-2, 2],
   });
@@ -28,6 +28,7 @@ export default function App(){
   const [rawText, setRawText] = useState("");
   const [partStates, setPartStates] = useState({});
   const [bpm, setBpm] = useState(140); // Default BPM
+  // const [codeLoaded, setCodeLoaded] = useState(false);
 
   // Detect parts from raw text
   const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
@@ -50,6 +51,7 @@ export default function App(){
     if (!ready) return;
     if(!processed.trim()) return;
     setCode(processed);
+    // setCodeLoaded(true);
     console.log("Preprocessed and set code.");
   }, [ready, processed, setCode]);
 
@@ -58,9 +60,24 @@ export default function App(){
     if(!processed.trim()) return;
     console.log(processed);
     setCode(processed);
+    // setCodeLoaded(true);
     setTimeout(() => evaluate(), 0);
     console.log("Process and Play");
   }, [ready, processed, setCode, evaluate]);
+
+  const handlePlay = useCallback(() => {
+    if (!ready) {
+      alert("Strudel is not ready yet!\n\nPlease wait for the strudel editor to initialise");
+      return;
+    };
+
+    if(!hasCode()){
+      alert("No code loaded!\n\nPlease preprocess or load a tune first.");
+      return ;
+    }
+
+    evaluate();
+  }, [ready, evaluate]);
 
   const handlePartStateChange = useCallback((partName, newState) => {
     const wasPlaying = isStarted();
@@ -132,11 +149,11 @@ export default function App(){
     if (rawText === "") setRawText(prev => (prev === "" ? stranger_tune : prev));
   }, [ready, rawText]);
 
-  // Update editor when processed code changes
-  useEffect(() => {
-    if (!ready) return;
-    setCode(processed);
-  }, [processed, ready, setCode]);
+  // // Update editor when processed code changes
+  // useEffect(() => {
+  //   if (!ready) return;
+  //   setCode(processed);
+  // }, [processed, ready, setCode]);
 
   // Render UI layout
   return (
@@ -150,7 +167,7 @@ export default function App(){
         <Tranport
           onPreprocess={handlePreprocess}
           onProcPlay={handleProcPlay}
-          onPlay={evaluate}
+          onPlay={handlePlay}
           onStop={stop}
           disabled={!ready}/>
           <TempoControl 
