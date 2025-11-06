@@ -11,6 +11,7 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
+import { set } from '@strudel/core';
 
 // let globalEditor = null;
 const handleD3Data = (event) => {
@@ -28,6 +29,7 @@ export default function App(){
   const [rawText, setRawText] = useState("");
   const [partStates, setPartStates] = useState({});
   const [bpm, setBpm] = useState(140); // Default BPM
+  const isUpdatingRef = useRef(false);
   // const [codeLoaded, setCodeLoaded] = useState(false);
 
   // Detect parts from raw text
@@ -80,51 +82,53 @@ export default function App(){
   }, [ready, evaluate]);
 
   const handlePartStateChange = useCallback((partName, newState) => {
-    const wasPlaying = isStarted();
-
-    setPartStates(prev => ({
-      ...prev,
-      [partName]: newState
-    }));
+    if(isUpdatingRef.current) return;
+    setPartStates(prev => {
+      const newStates = { ...prev, [partName]: newState
+    };
 
     // If playing, restart with new part configuration
-    if (wasPlaying){
+    if (isStarted()){
+      isUpdatingRef.current = true;
       stop();
+
       setTimeout(() => {
-        const newProcessed = preprocess(rawText, {
-          ...partStates,
-          [partName]: newState
-        });
+        const newProcessed = preprocess(rawText, newStates);
         setCode(newProcessed);
-        setTimeout(() => evaluate(), 50);
+        setTimeout(() => {
+          evaluate();
+          isUpdatingRef.current = false;
+        }, 50);
       }, 50);
     }
-  }, [isStarted, stop, setCode, evaluate, rawText, partStates]); 
+    return newStates;
+  });
+  }, [isStarted, stop, setCode, evaluate, rawText]);
 
   const handleBpmChange = useCallback((newBpm) => {
-    const wasPlaying = isStarted();
+    if(isUpdatingRef.current) return;
     setBpm(newBpm);
 
-    const cps = (newBpm / 60 /4).toFixed(6); // Convert BPM to cycles per second
+    setRawText(prevRawText => {
+      const updatedCode = prevRawText.replace(/setcps\(([^)]+)\)/,
+         `setcps(${newBpm}/60/4)`);
 
-    const updatedCode = rawText.replace(
-      /setcps\([^)]+\)/g,
-      `setcps(${newBpm}/60/4)`  
-    );
 
-    setRawText(updatedCode);
-
-    if(wasPlaying){
+    if(isStarted()){
+      isUpdatingRef.current = true;
       stop();
+      const processedWithNewTempo = preprocess(updatedCode, partStates);
       setTimeout(() => {
-      const processedWithNewTempo = preprocess(updatedCode, partStates);
-      setCode(processedWithNewTempo);
-      setTimeout(() => evaluate(), 50);}, 50);
-    } else {
-      const processedWithNewTempo = preprocess(updatedCode, partStates);
-      setCode(processedWithNewTempo);
+        setCode(processedWithNewTempo);
+        setTimeout(() => {
+          evaluate();
+          isUpdatingRef.current = false;
+        }, 50);
+      }, 50);
     }
-  }, [rawText, partStates, setCode, isStarted, stop, evaluate]);
+    return updatedCode;
+  })
+  }, [partStates, setCode, isStarted, stop, evaluate]);
 
   // Extract BPM from raw text when it changes
   useEffect(() => {
@@ -140,7 +144,7 @@ export default function App(){
       }
     }
   }
-}, [rawText, bpm]);
+}, [rawText]);
 
   // Initialize raw text with default tune if empty
   useEffect(() => {
@@ -149,22 +153,37 @@ export default function App(){
     if (rawText === "") setRawText(prev => (prev === "" ? stranger_tune : prev));
   }, [ready, rawText]);
 
-  // // Update editor when processed code changes
-  // useEffect(() => {
-  //   if (!ready) return;
-  //   setCode(processed);
-  // }, [processed, ready, setCode]);
+  useEffect(() => {
+    const newStates = {};
+    detectedParts.forEach(part => {
+        // Only check if key exists, don't read value
+        if (!(part.name in partStates)) {
+            newStates[part.name] = 'on';
+        }
+    });
+
+    // Only update if there are new parts
+    if (Object.keys(newStates).length > 0) {
+        setPartStates(prev => ({ ...prev, ...newStates }));
+    }
+    }, [detectedParts]); // Removed partStates from dependencies
 
   // Render UI layout
   return (
     <div>
-    <h2>Strudle Demo</h2>
+    <h2>🎵 Strudle Demo By Kimchhay Leng</h2>
     <main className="container-fluid">
       {/* Top section text input and transport buttons */}
       <div className="row">
-        <PreprocessInput value={rawText} onChange={setRawText}/>
+        <div class="col-8">
+          <div class="panel">
+            <PreprocessInput value={rawText} onChange={setRawText}/>
+          </div>
+        </div>
+
         <div className='col-4'>
-        <Tranport
+          <div className="panel">
+          <Tranport
           onPreprocess={handlePreprocess}
           onProcPlay={handleProcPlay}
           onPlay={handlePlay}
@@ -175,10 +194,16 @@ export default function App(){
             onBpmChange={handleBpmChange}
             disabled={!ready}
           />
+          </div>
         </div>
       </div>
       <div className="row mt-3">
-        <EditorPane mountRef={mountRef}/>
+        <div className='col-8'>
+          <div className='panel editor-pane'>
+            <EditorPane mountRef={mountRef} />
+          </div>
+        </div>
+
         <PartControls
           parts={detectedParts}
           partStates={partStates}

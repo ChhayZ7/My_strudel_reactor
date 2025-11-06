@@ -8,8 +8,7 @@ import React from "react";
 
 function PreprocessInput ({ value, onChange }){
     return (
-        <div class="col-md-8"
-            style={{ maxHeight: "50vh", overflowY: "auto"}}>
+        <div>
                 <label>
                     Text to preprocess:
                 </label>
