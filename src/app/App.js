@@ -11,9 +11,7 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
-import { set } from '@strudel/core';
 
-// let globalEditor = null;
 const handleD3Data = (event) => {
   console.log(event.detail);
 };
@@ -28,9 +26,9 @@ export default function App(){
 
   const [rawText, setRawText] = useState("");
   const [partStates, setPartStates] = useState({});
+  // Example: partStates = { 'arp': 'on', 'bass': 'hush' }
   const [bpm, setBpm] = useState(140); // Default BPM
-  const isUpdatingRef = useRef(false);
-  // const [codeLoaded, setCodeLoaded] = useState(false);
+  const isUpdatingRef = useRef(false); // Still be tested not use if it is useful
 
   // Detect parts from raw text
   const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
@@ -39,15 +37,6 @@ export default function App(){
   const processed = useMemo(() => {
     return preprocess(rawText, partStates);
   }, [rawText, partStates]);
-
-  // Initialize part states when parts change
-  // useEffect(() => {
-  //   const newStates = {};
-  //   detectedParts.forEach(part => {
-  //     newStates[part.name] = partStates[part.name] || 'on';
-  //   });
-  //   setPartStates(newStates);
-  // }, [detectedParts]);
 
   const handlePreprocess = useCallback(() => {
     if (!ready) return;
@@ -62,7 +51,6 @@ export default function App(){
     if(!processed.trim()) return;
     console.log(processed);
     setCode(processed);
-    // setCodeLoaded(true);
     setTimeout(() => evaluate(), 0);
     console.log("Process and Play");
   }, [ready, processed, setCode, evaluate]);
@@ -73,6 +61,7 @@ export default function App(){
       return;
     };
 
+    // Handle no code case
     if(!hasCode()){
       alert("No code loaded!\n\nPlease preprocess or load a tune first.");
       return ;
@@ -140,7 +129,7 @@ export default function App(){
       console.log("Extracted CPS:", cpsValue);
       if(!isNaN(cpsValue)){
         const extractedBpm = cpsValue * 60 *4; // Convert CPS back to BPM
-        if (Math.abs(extractedBpm - bpm) > 0.1){
+        if (Math.abs(extractedBpm - bpm) > 0.1){ // Avoid unnecessary updates when BPM changes is too small
           console.log("Updating BPM to:", extractedBpm);
           setBpm(extractedBpm);
       }
@@ -163,12 +152,16 @@ export default function App(){
             newStates[part.name] = 'on';
         }
     });
+    // Example: before: prev = { bass: "on", drums: "hush" }
+    // newStates = { arp: "on" }
 
     // Only update if there are new parts
     if (Object.keys(newStates).length > 0) {
         setPartStates(prev => ({ ...prev, ...newStates }));
     }
-    }, [detectedParts]); // Removed partStates from dependencies
+
+    // Example: after: PartStates = { bass: "on", drums: "hush", arp: "on" }
+    }, [detectedParts]);
 
   // Render UI layout
   return (
@@ -206,15 +199,28 @@ export default function App(){
           </div>
         </div>
 
-        <PartControls
-          parts={detectedParts}
-          partStates={partStates}
-          onChange={handlePartStateChange}
-          disabled={!ready}
-        />
+        <div className='col-4'>
+          <div className='panel'>
+            <PartControls
+            parts={detectedParts}
+            partStates={partStates}
+            onChange={handlePartStateChange}
+            disabled={!ready}
+          />
+          </div>
+        </div>
+
     </div>
     </main>
-    <canvas ref={canvasRef} id="strudelCanvas"></canvas>
+    <div className="row mt-3">
+      <div className="col-12">
+        <div className="canvas-container">
+        {/* <canvas ref={canvasRef}></canvas> */}
+        🎵 Strudel Visualization Canvas  🎵 (TBA)
+        </div>
+      </div>
+    </div>
+
   </div>
   )
 }
