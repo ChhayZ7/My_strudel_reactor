@@ -15,6 +15,8 @@ export function detectParts(code) {
     }
     
     return parts;
+    // example return: [ { name: 'arp', fullMatch: '<part:arp>...</part:arp>'
+    // content: '...' (content within the arp tags) }, ... ]
   }
 
 // Preprocess code based on part states
