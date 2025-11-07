@@ -5,7 +5,6 @@ import React from "react";
  * before preprocessing. Controlled via 'value' and 'onChange'.
  */
 
-
 function PreprocessInput ({ value, onChange }){
     return (
         <div>

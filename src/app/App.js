@@ -18,12 +18,6 @@ const handleD3Data = (event) => {
 
 export default function App(){
   const canvasRef = useRef(null);
-
-  const { mountRef, ready, setCode, evaluate, stop, hasCode, isStarted } = useStrudelEditor({
-    canvasRef,
-    drawTime: [-2, 2],
-  });
-
   const [rawText, setRawText] = useState("");
   const [partStates, setPartStates] = useState({});
   // Example: partStates = { 'arp': 'on', 'bass': 'hush' }
@@ -33,11 +27,18 @@ export default function App(){
   // Detect parts from raw text
   const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
 
+  // Use and expose Strudel editor controls
+  const { mountRef, ready, setCode, evaluate, stop, hasCode, isStarted } = useStrudelEditor({
+    canvasRef,
+    drawTime: [-2, 2],
+  });
+
     // Preprocess code based on part states
   const processed = useMemo(() => {
     return preprocess(rawText, partStates);
   }, [rawText, partStates]);
 
+  // Handle preprocessing when preprocess button is clicked
   const handlePreprocess = useCallback(() => {
     if (!ready) return;
     if(!processed.trim()) return;
@@ -46,6 +47,7 @@ export default function App(){
     console.log("Preprocessed and set code.");
   }, [ready, processed, setCode]);
 
+  // Handle preprocess and play when button is clicked
   const handleProcPlay = useCallback(() => {
     if (!ready) return;
     if(!processed.trim()) return;
@@ -55,6 +57,7 @@ export default function App(){
     console.log("Process and Play");
   }, [ready, processed, setCode, evaluate]);
 
+  // Handle play button click
   const handlePlay = useCallback(() => {
     if (!ready) {
       alert("Strudel is not ready yet!\n\nPlease wait for the strudel editor to initialise");
@@ -70,6 +73,7 @@ export default function App(){
     evaluate();
   }, [ready, evaluate]);
 
+  // Handle instrument part state changes
   const handlePartStateChange = useCallback((partName, newState) => {
     if(isUpdatingRef.current) return;
     setPartStates(prev => {
@@ -96,6 +100,7 @@ export default function App(){
   });
   }, [isStarted, stop, setCode, evaluate, rawText]);
 
+  // Handle BPM changes for tempo control
   const handleBpmChange = useCallback((newBpm) => {
     if(isUpdatingRef.current) return;
     setBpm(newBpm);
@@ -144,6 +149,7 @@ export default function App(){
     if (rawText === "") setRawText(prev => (prev === "" ? stranger_tune : prev));
   }, [ready, rawText]);
 
+  // Update part states when detected parts change
   useEffect(() => {
     const newStates = {};
     detectedParts.forEach(part => {
@@ -168,7 +174,7 @@ export default function App(){
     <div>
     <h2>🎵 Strudle Demo By Kimchhay Leng</h2>
     <main className="container-fluid">
-      {/* Top section text input and transport buttons */}
+      {/* Frist Row: Preprocess Input | Transport & Tempo Control */}
       <div className="row">
         <div class="col-8">
           <div className="panel">
@@ -192,6 +198,7 @@ export default function App(){
           </div>
         </div>
       </div>
+      {/* Second Row: Strudel Editor | Tune's Part Controls */}
       <div className="row mt-3">
         <div className='col-8'>
           <div className='panel editor-pane'>
@@ -211,7 +218,7 @@ export default function App(){
         </div>
 
     </div>
-    </main>
+    {/* Third Row: Visualization Canvas (TBA) */}
     <div className="row mt-3">
       <div className="col-12">
         <div className="canvas-container">
@@ -220,7 +227,7 @@ export default function App(){
         </div>
       </div>
     </div>
-
+    </main>
   </div>
   )
 }

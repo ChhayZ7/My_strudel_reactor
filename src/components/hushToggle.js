@@ -1,5 +1,7 @@
 import React from "react";
 
+// A simple toggle for hush mode
+// Not in used anymore (Replaced by PartControls in newer versions)
 function HushToggle({hush, onChange}){
     return (
         <div className="col-md-4">

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect} from "react";
 
+// A tempo control component for setting BPM with input and preset buttons
 function TempoControl({ bpm, onBpmChange, disabled = false }){
     const [activeInput, setActiveInput] = useState('bpm');
 

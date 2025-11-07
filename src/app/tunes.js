@@ -1,3 +1,6 @@
+// Default tune code for the Strudel editor
+// Each instrument part is defined within <part:part_name> ... </part:part_name> tags for easy management
+
 export const stranger_tune = `setcps(140/60/4)
 
 samples('github:algorave-dave/samples')

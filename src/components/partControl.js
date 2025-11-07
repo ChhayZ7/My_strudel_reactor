@@ -1,4 +1,6 @@
 import React from "react";
+
+// A control component for a single part (e.g., Arp, Bassline, Drums)
 function PartControl ({ partName, state, onChange, disabled }){
     const displayName = partName.charAt(0).toUpperCase() + partName.slice(1);
 

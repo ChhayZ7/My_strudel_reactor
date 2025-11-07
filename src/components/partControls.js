@@ -1,6 +1,7 @@
 import PartControl from './partControl';
 import React from "react";
 
+// A set of controls for multiple parts
 function PartControls({ parts, partStates, onChange, disabled}){
     if ( parts.length === 0 ){
         return (

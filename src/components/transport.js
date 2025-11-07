@@ -1,5 +1,6 @@
 import React from "react";
 
+// A transport control component with buttons for Preprocess, Proc & Play, Play, and Stop
 function Transport({
     onPreprocess,
     onProcPlay,
