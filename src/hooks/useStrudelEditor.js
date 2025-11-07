@@ -33,8 +33,8 @@ export function useStrudelEditor(options = {}){
             let drawCtx = null;
             if (canvasRef?.current){
                 const c = canvasRef.current;
-                c.width = c.width * 2;
-                c.height = c.height * 2;
+                c.width = c.width;
+                c.height = c.height;
                 drawCtx = c.getContext("2d");
             }
             // Build the editor
