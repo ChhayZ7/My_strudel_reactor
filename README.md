@@ -68,3 +68,20 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Strudel Live-Coding Playground (Prototype)
+
+This project is an interactive web-based Strudel music playground built with React.
+It lets user write, preprocess, and play Strudel code directly in the browser with live audio playback and per-track controls.
+
+### Current Features
+- **Studel Editor Integration**: Uses a 'useStrudelEditor' custom hook to mount a StrudelMirror editor and handle playbacl (evaluate, stop, setCode).
+- **Part-Based Code Management**: Automatically detects '<part:name>' sections and allows toggling each between:
+    - ON: included in playback
+    - HUSH: mute
+    - SOLO: plays exclusively, mutes all others
+- **Dynamic Preprocessing**: Rewrites Strudel Code on-the-fly based on part states before playback.
+- **BPM Control**: Interactive tempo component that syncs with Strudel's 'setcps()' value in code, allowing live tempo changes.
+- **Transport Control**: Buttons for Preprocess, Process & Play, Play, and Stop with restart handling.
+- **Editor Rendering** Display an editable code panel ( There is still a bug that keeps adding duplicate tune's code to the editor when using bpm control or part control (Will be address in the future version)).
+- **Default Tune**: Loads a default tune (with multiple part: bassline, arp, drums) for instant testing.
