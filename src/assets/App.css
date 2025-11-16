@@ -65,7 +65,7 @@ body {
   padding: 20px;
 }
 
-h2{
+h2.app-title{
   color: var(--neon-cyan) !important;
   text-shadow: 0 0 15px rgba(0, 243, 255, 0.7);
   animation: neon-pulse 3s infinite;
@@ -97,8 +97,8 @@ h5, h6 {
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5),
   inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
   transition: all 0.3s ease;
 }
 
@@ -375,6 +375,186 @@ button.disabled{
   justify-content: center;
   color: var(--neon-cyan);
   font-size: 1.5rem;
+}
+
+.accordion {
+  --bs-accordion-color: var(--text-primary);
+  --bs-accordion-bg: var(--panel-bg);
+  --bs-accordion-border-color: var(--panel-border);
+  --bs-accordion-border-width: 2px;
+  --bs-accordion-border-radius: 8px;
+  --bs-accordion-inner-border-radius: 6px;
+  --bs-accordion-btn-padding-x: 1rem;
+  --bs-accordion-btn-padding-y: 0.75rem;
+  --bs-accordion-btn-color: var(--neon-cyan);
+  --bs-accordion-btn-bg: var(--panel-bg);
+  --bs-accordion-btn-focus-border-color: var(--neon-cyan);
+  --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(0, 243, 255, 0.25);
+  --bs-accordion-body-padding-x: 1rem;
+  --bs-accordion-body-padding-y: 1rem;
+  --bs-accordion-active-color: var(--neon-cyan);
+  --bs-accordion-active-bg: var(--input-bg);
+}
+
+/* Accordion Item */
+.accordion-item {
+  background: var(--panel-bg) !important;
+  border: 2px solid var(--panel-border) !important;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.accordion-item:hover {
+  border-color: var(--hover-glow) !important;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+/* Accordion Header/Button */
+.accordion-button {
+  background: linear-gradient(145deg, var(--panel-bg), var(--input-bg)) !important;
+  color: var(--neon-cyan) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  box-shadow: none;
+  transition: all 0.3s ease;
+  padding: 0.75rem 1rem;
+}
+
+.accordion-button:not(.collapsed) {
+  background: linear-gradient(145deg, var(--input-bg), var(--panel-border)) !important;
+  color: var(--neon-cyan);
+  box-shadow: inset 0 -1px 0 rgba(0, 243, 255, 0.3);
+  border-bottom: 2px solid var(--neon-cyan);
+}
+
+.accordion-button:hover {
+  background: linear-gradient(145deg, var(--panel-border), var(--input-bg)) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3) !important;
+}
+
+.accordion-button:focus {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4) !important;
+  outline: none;
+}
+
+/* Accordion Icon (Chevron) */
+.accordion-button::after {
+  filter: brightness(0) saturate(100%) invert(70%) sepia(84%) saturate(2476%) 
+          hue-rotate(161deg) brightness(101%) contrast(101%);
+  /* This makes the chevron cyan-colored */
+}
+
+.accordion-button:not(.collapsed)::after {
+  filter: brightness(0) saturate(100%) invert(70%) sepia(84%) saturate(2476%) 
+          hue-rotate(161deg) brightness(101%) contrast(101%);
+  transform: rotate(-180deg);
+}
+
+/* Accordion Body */
+.accordion-body {
+  background: var(--panel-bg) !important;
+  color: var(--text-primary) !important;
+  padding: 1rem;
+  border-top: 1px solid var(--panel-border) !important;
+}
+
+/* Remove default Bootstrap padding/margin tweaks */
+.accordion-button:not(.collapsed) {
+  box-shadow: none;
+}
+
+.accordion-button:hover {
+  z-index: 2;
+}
+
+/* ========================================
+   SPECIFIC ACCORDION SECTIONS
+   ======================================== */
+
+/* Code Input Accordion */
+#codeAccordion .accordion-item {
+  border-left: 3px solid var(--neon-cyan) !important;
+}
+
+#codeAccordion .accordion-item:hover {
+  border-left-color: var(--neon-magenta) !important;
+}
+
+/* Controls Accordion */
+#controlsAccordion .accordion-item {
+  border-left: 3px solid var(--neon-pink) !important;
+}
+
+#controlsAccordion .accordion-item:hover {
+  border-left-color: var(--neon-yellow) !important;
+}
+
+/* Transport Section - Keep Open by Default */
+#collapseTransport.show {
+  border-top: 2px solid var(--neon-cyan) !important;
+}
+
+/* Part Controls Section */
+#collapseParts .accordion-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Help Section */
+#collapseHelp .accordion-body {
+  background: linear-gradient(145deg, var(--input-bg), var(--panel-bg)) !important;
+}
+
+.help-section h6 {
+  color: var(--neon-yellow) !important;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--panel-border) !important;
+  padding-bottom: 0.3rem;
+}
+
+.help-section ol,
+.help-section ul {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  font-size: 0.85rem;
+}
+
+.help-section li {
+  margin-bottom: 0.3rem;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ACCORDION ANIMATIONS
+   ======================================== */
+
+.accordion-collapse {
+  transition: height 0.35s ease;
+}
+
+/* Smooth expand/collapse */
+.collapsing {
+  transition: height 0.35s ease;
+}
+
+/* ========================================
+   COMPACT MODE ADJUSTMENTS
+   ======================================== */
+
+/* Reduce accordion padding for more compact look */
+.accordion-button.compact {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.accordion-body.compact {
+  padding: 0.75rem;
 }
 
 /* Animation for page title */
