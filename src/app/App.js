@@ -5,7 +5,7 @@ import { useEffect, useRef, useMemo, useState, useCallback, use } from "react";
 import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
 import PreprocessInput from '../components/preprocessInput';
-import Tranport from '../components/transport';
+import Transport from '../components/transport';
 import EditorPane from '../components/editorPane';
 import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
@@ -172,52 +172,75 @@ export default function App(){
   // Render UI layout
   return (
     <div>
-    <h2>🎵 Strudle Demo By Kimchhay Leng</h2>
+    <h2 className='app-title'>🎵 Strudle Demo By Kimchhay Leng</h2>
+
+    {!ready && (
+      <div className="alert alert-info">
+        Loading Strudel Editor... Please wait.
+      </div>
+    )}
     <main className="container-fluid">
-      {/* Frist Row: Preprocess Input | Transport & Tempo Control */}
-      <div className="row">
-        <div class="col-8">
-          <div className="panel">
+      {/* Main Layout: Code Editor (Left) | Controls (Right) */}
+      <div className="row g-2">
+        <div class="col-md-8">
+          <div className="panel editor-pane">
             <PreprocessInput value={rawText} onChange={setRawText}/>
           </div>
-        </div>
 
-        <div className='col-4'>
-          <div className="panel">
-          <Tranport
-          onPreprocess={handlePreprocess}
-          onProcPlay={handleProcPlay}
-          onPlay={handlePlay}
-          onStop={stop}
-          disabled={!ready}/>
-          <TempoControl 
-            bpm={bpm}
-            onBpmChange={handleBpmChange}
-            disabled={!ready}
-          />
-          </div>
-        </div>
-      </div>
-      {/* Second Row: Strudel Editor | Tune's Part Controls */}
-      <div className="row mt-3">
-        <div className='col-8'>
           <div className='panel editor-pane'>
             <EditorPane mountRef={mountRef} />
           </div>
         </div>
 
-        <div className='col-4'>
-          <div className='panel'>
-            <PartControls
-            parts={detectedParts}
-            partStates={partStates}
-            onChange={handlePartStateChange}
-            disabled={!ready}
-          />
-          </div>
-        </div>
+        <div className='col-md-4'>
+            <div className="accordion" id="accordionExample">
+              <div className="panel mb-2">
+              <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Transport Controls
+                  </button>
+                </h2>
+                <div id="collapseOne" className="accordion-collapse collapse show">
+                  <div className="accordion-body">
+                    <Transport
+                      onPreprocess={handlePreprocess}
+                      onProcPlay={handleProcPlay}
+                      onPlay={handlePlay}
+                      onStop={stop}
+                      disabled={!ready}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+              <div className='panel mb-2'>
+                              <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Instrument Controls
+                  </button>
+                </h2>
+                <div id="collapseTwo" className="accordion-collapse collapse">
+                  <div className="accordion-body">
+                    <PartControls
+                    parts={detectedParts}
+                    partStates={partStates}
+                    onChange={handlePartStateChange}
+                    disabled={!ready}
+                    />
+                  </div>
+                </div>
+              </div>
 
-    </div>
+            </div>
+          </div>
+
+
+
+
+        </div>
+      </div>
     {/* Third Row: Visualization Canvas (TBA) */}
     <div className="row mt-3">
       <div className="col-12">
