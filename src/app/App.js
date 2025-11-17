@@ -17,6 +17,7 @@ import {
   saveProjectToFile,
   loadProjectFromFile
  } from '../utils/strudelProjectManaging';
+import VolumeControl from '../components/volumeControl';
 
 const handleD3Data = (event) => {
   console.log(event.detail);
@@ -29,6 +30,7 @@ export default function App(){
   // Example: partStates = { 'arp': 'on', 'bass': 'hush' }
   const [bpm, setBpm] = useState(140); // Default BPM
   const [projectName, setProjectName] = useState("Untitled Project");
+  const [volume, setVolume] = useState(1.0) // 100% volume by defualt
   const isUpdatingRef = useRef(false); // Still be tested not use if it is useful
 
   // Detect parts from raw text
@@ -40,10 +42,10 @@ export default function App(){
     drawTime: [-2, 2],
   });
 
-    // Preprocess code based on part states
+    // Preprocess code based on part states and volume
   const processed = useMemo(() => {
-    return preprocess(rawText, partStates);
-  }, [rawText, partStates]);
+    return preprocess(rawText, partStates, volume);
+  }, [rawText, partStates, volume]);
 
   // Handle preprocessing when preprocess button is clicked
   const handlePreprocess = useCallback(() => {
@@ -193,6 +195,26 @@ export default function App(){
     event.target.value = '';
   }, [isStarted, stop]);
 
+  // Handle volume change
+  const handleVolumeChange = useCallback((newVolume) => {
+    setVolume(newVolume);
+
+    // If playing, restart with new volume
+    if(isStarted()){
+      isUpdatingRef.current = true;
+      stop();
+
+      const newProcessed = preprocess(rawText, partStates, newVolume);
+      setTimeout(() => {
+        setCode(newProcessed);
+        setTimeout(() => {
+          evaluate();
+          isUpdatingRef.current = false;
+        }, 50);
+      }, 50);
+    }
+  }, [isStarted, stop, rawText, partStates, setCode, evaluate]);
+
   // Extract BPM from raw text when it changes
   useEffect(() => {
     const match = rawText.match(/setcps\(([^)]+)\)/);
@@ -275,6 +297,24 @@ export default function App(){
                       onProcPlay={handleProcPlay}
                       onPlay={handlePlay}
                       onStop={stop}
+                      disabled={!ready}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="panel mb-2">
+              <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVolume" aria-expanded="true" aria-controls="collapseVolume">
+                    Master Volume ({(volume * 100).toFixed(0)}%)
+                  </button>
+                </h2>
+                <div id="collapseVolume" className="accordion-collapse collapse">
+                  <div className="accordion-body">
+                    <VolumeControl
+                      volume={volume}
+                      onVolumeChange={handleVolumeChange}
                       disabled={!ready}
                     />
                   </div>
