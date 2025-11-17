@@ -68,7 +68,7 @@ export function preprocess(code, partStates, volume = 1.0) {
 
   function applyVolumeToContent(content, volume){
     // If volume is default (1.0), don't modify
-    if (volume === 1.0){
+    if (Math.abs(volume - 1.0) < 0.001){
       return content;
     }
 
@@ -81,36 +81,16 @@ export function preprocess(code, partStates, volume = 1.0) {
         return line;
       }
 
-      // Check if line has .gain() or .postgain()
-      const hasGain = line.includes('.gain(');
-      const hasPostgain = line.includes('.postgain(');
-
-      if (hasGain || hasPostgain){
-        // Multiply existing gain/postgain values by master volume
-        let processedLine = line
-
-        // Handle .gain() by multiply the value
-        if (hasGain){
-          processedLine = processedLine.replace(
-            /\.gain\(([^)]+)\)/g,
-            `.gain(($1) * ${volume.toFixed(3)})`
-          );
-        }
-
-        // Handle .postgain() by multiply the value
-        if (hasPostgain){
-          processedLine = processedLine.replace(
-            /\.postgain\(([^)]+)\)/g,
-            `.postgain(($1) * ${volume.toFixed(3)})`
-          );
-        }
-        return processedLine;
-      }
-
-      // Check if this is a pattern line (contains : and method chaining)
-      // Add .gain() to lines that don't have any gain control
-      if (trimmed.includes(':') && trimmed.includes('.')) {
-          return line + `.gain(${volume.toFixed(3)})`;
+      if (line.includes('.gain(')) {
+        return line.replace(
+          /\.gain\(([^)]+)\)/g,
+          (match, gainValue) => {
+            // Check if already modified: pattern is (value) * number
+            const modifiedMatch = gainValue.match(/^\((.+)\)\s*\*\s*[\d.]+$/);
+            const baseValue = modifiedMatch ? modifiedMatch[1] : gainValue;
+            return `.gain((${baseValue}) * ${volume.toFixed(3)})`;
+          }
+        );
       }
 
       return line;
