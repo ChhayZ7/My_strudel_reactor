@@ -287,7 +287,7 @@ export default function App(){
               <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Transport Controls
+                    ⏯️ Transport Controls
                   </button>
                 </h2>
                 <div id="collapseOne" className="accordion-collapse collapse show">
@@ -307,7 +307,7 @@ export default function App(){
               <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVolume" aria-expanded="true" aria-controls="collapseVolume">
-                    Master Volume ({(volume * 100).toFixed(0)}%)
+                    🔊 Master Volume ({(volume * 100).toFixed(0)}%)
                   </button>
                 </h2>
                 <div id="collapseVolume" className="accordion-collapse collapse">
@@ -325,7 +325,7 @@ export default function App(){
                 <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    Tempo Control (BPM: {bpm.toFixed(0)})
+                    ⏱️ Tempo Control (BPM: {bpm.toFixed(0)})
                   </button>
                 </h2>
                 <div id="collapseTwo" className="accordion-collapse collapse">
@@ -343,7 +343,7 @@ export default function App(){
                 <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                    Instrument Controls
+                    🎛️ Instrument Controls
                   </button>
                 </h2>
                 <div id="collapseThree" className="accordion-collapse collapse">
@@ -363,7 +363,7 @@ export default function App(){
                 <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-                    Save/Load Project
+                    💾 Save/Load Project
                   </button>
                 </h2>
                 <div id="collapseFour" className="accordion-collapse collapse">
