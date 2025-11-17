@@ -11,6 +11,12 @@ import PartControls from '../components/partControls'
 import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
+import ProjectManager from '../components/projectManager';
+import { 
+  createProject,
+  saveProjectToFile,
+  loadProjectFromFile
+ } from '../utils/strudelProjectManaging';
 
 const handleD3Data = (event) => {
   console.log(event.detail);
@@ -22,6 +28,7 @@ export default function App(){
   const [partStates, setPartStates] = useState({});
   // Example: partStates = { 'arp': 'on', 'bass': 'hush' }
   const [bpm, setBpm] = useState(140); // Default BPM
+  const [projectName, setProjectName] = useState("Untitled Project");
   const isUpdatingRef = useRef(false); // Still be tested not use if it is useful
 
   // Detect parts from raw text
@@ -126,6 +133,66 @@ export default function App(){
   })
   }, [partStates, setCode, isStarted, stop, evaluate]);
 
+  // Handles saving current project to JSON file
+  const handleSaveProject = useCallback(() => {
+    try{
+      const project = createProject(
+        rawText,
+        partStates,
+        bpm,
+        projectName
+      );
+
+      const filename = saveProjectToFile(project);
+
+      alert(`Project saved succesfully!\n\nFile: ${filename}`)
+      console.log("💾 Project saved:", filename);
+    } catch (error) {
+      console.error("Failed to save project:", error);
+      alert(`Failed to save project:\n${error.message}`);
+    }
+  }, [rawText, partStates, bpm, projectName]);
+
+  // Handles loading project from JSON file
+  const handleLoadProject = useCallback(async (event) => {
+    const file = event.target.files[0];
+    if(!file) return;
+
+    try{
+      const project = await loadProjectFromFile(file);
+
+      // Stop playback if currently playing
+      if (isStarted()){
+        stop();
+      }
+
+      // Apply project data to app state
+      setRawText(project.code.raw);
+      setPartStates(project.partStates);
+      setBpm(project.settings.bpm);
+      setProjectName(project.metadata.name);
+
+      console.log(`Project loaded: ${project.metadata.name}`);
+      console.log(`Parts: ${Object.keys(project.partStates).length}`);
+      console.log(`BPM: ${project.settings.bpm}`);
+
+      // Show success notification
+      alert(
+        `✅ Project loaded successfully!\n\n` +
+        `Name: ${project.metadata.name}\n` +
+        `Parts: ${Object.keys(project.partStates).length}\n` +
+        `BPM: ${project.settings.bpm}\n\n` +
+        `Click "Proc & Play" to start playback.`
+      );
+    } catch (error) {
+      console.error("Failed to load project:", error);
+      alert(`❌ Failed to load project:\n\n${error.message}`);
+    }
+
+    // Reset file input
+    event.target.value = '';
+  }, [isStarted, stop]);
+
   // Extract BPM from raw text when it changes
   useEffect(() => {
     const match = rawText.match(/setcps\(([^)]+)\)/);
@@ -192,7 +259,7 @@ export default function App(){
           </div>
         </div>
 
-        <div className='col-md-4'>
+        <div className='col-md-4 scroll-section'>
             <div className="accordion" id="accordionExample">
               <div className="panel mb-2">
               <div className="accordion-item">
@@ -214,14 +281,32 @@ export default function App(){
                 </div>
               </div>
             </div>
-              <div className='panel mb-2'>
-                              <div className="accordion-item">
+                <div className='panel mb-2'>
+                <div className="accordion-item">
                 <h2 className="accordion-header">
                   <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                    Instrument Controls
+                    Tempo Control (BPM: {bpm.toFixed(0)})
                   </button>
                 </h2>
                 <div id="collapseTwo" className="accordion-collapse collapse">
+                  <div className="accordion-body">
+                    <TempoControl
+                      bpm={bpm}
+                      onBpmChange={handleBpmChange}
+                      disabled={!ready}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+              <div className='panel mb-2'>
+                <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                    Instrument Controls
+                  </button>
+                </h2>
+                <div id="collapseThree" className="accordion-collapse collapse">
                   <div className="accordion-body">
                     <PartControls
                     parts={detectedParts}
@@ -232,7 +317,27 @@ export default function App(){
                   </div>
                 </div>
               </div>
+            </div>
 
+                          <div className='panel mb-2'>
+                <div className="accordion-item">
+                <h2 className="accordion-header">
+                  <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                    Save/Load Project
+                  </button>
+                </h2>
+                <div id="collapseFour" className="accordion-collapse collapse">
+                  <div className="accordion-body">
+                    <ProjectManager
+                      projectName={projectName}
+                      onProjectNameChange={setProjectName}
+                      onSave={handleSaveProject}
+                      onLoad={handleLoadProject}
+                      disabled={!ready}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
