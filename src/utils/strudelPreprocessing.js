@@ -23,6 +23,15 @@ export function detectParts(code) {
 export function preprocess(code, partStates, volume = 1.0) {
     let processed = code;
     
+    // Validate volume input
+    if (!isFinite(volume) || isNaN(volume)){
+      console.error("Invalid volume value: ", volume);
+      volume = 1.0; // Fallback to default
+    }
+
+    // Clamp volume to reasonable range (0 to 2)
+    volume = Math.max(0, Math.min(2, volume));
+
     // Check if any part is soloed
     const soloedParts = Object.entries(partStates)
       .filter(([_, state]) => state === 'solo')
@@ -68,7 +77,7 @@ export function preprocess(code, partStates, volume = 1.0) {
 
   function applyVolumeToContent(content, volume){
     // If volume is default (1.0), don't modify
-    if (volume === 1.0){
+    if (Math.abs(volume - 1.0) < 0.001){
       return content;
     }
 
@@ -81,29 +90,46 @@ export function preprocess(code, partStates, volume = 1.0) {
         return line;
       }
 
-      // Check if line has .gain() or .postgain()
-      const hasGain = line.includes('.gain(');
-      const hasPostgain = line.includes('.postgain(');
-
-      if (hasGain || hasPostgain){
-        // Multiply existing gain/postgain values by master volume
-        let processedLine = line
-
-        // Handle .gain() by multiply the value
-        if (hasGain){
+      let processedLine = line;
+      let modified = false
+      // Handle .gain() by multiply the value
+      if (line.includes('.gain(')){
+        // Check if already modified (contains the volume multiplier)
+        if (!line.includes(`* ${volume.toFixed(3)}`)){
           processedLine = processedLine.replace(
             /\.gain\(([^)]+)\)/g,
-            `.gain(($1) * ${volume.toFixed(3)})`
+            (match, gainValue) => {
+              // Don't modify if it's already been modified
+              if (gainValue.includes('*')){
+                return match;
+              }
+              return `.gain((${gainValue}) * ${volume.toFixed(3)})`;
+            }
           );
+          modified = true;
         }
+      }
 
-        // Handle .postgain() by multiply the value
-        if (hasPostgain){
+      // Handle .postgain() by multiply the value
+      if (line.includes('.postgain(')){
+        // Check if already modified (contains the volume multiplier)
+        if (!line.includes(`* ${volume.toFixed(3)}`)){
           processedLine = processedLine.replace(
             /\.postgain\(([^)]+)\)/g,
-            `.postgain(($1) * ${volume.toFixed(3)})`
+            (match, gainValue) => {
+              // Don't modify if it's already been modified
+              if (gainValue.includes('*')){
+                return match;
+              }
+              return `.postgain((${gainValue}) * ${volume.toFixed(3)})`;
+            }
           );
+          modified = true;
         }
+      }
+
+      // If we modified the line, return it
+      if (modified){
         return processedLine;
       }
 

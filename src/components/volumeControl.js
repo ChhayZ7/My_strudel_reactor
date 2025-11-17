@@ -46,12 +46,6 @@ function VolumeControl({ volume, onVolumeChange, disabled = false }){
         }
     }, [isMuted, volume, previousVolume, onVolumeChange]);
 
-    // Quick volume presets
-    const setVolumePreset = useCallback((preset) => {
-        setIsMuted(false);
-        onVolumeChange(preset);
-    }, [onVolumeChange]);
-
     return (
         <div className="volume-control">
             <label>Master Volume</label>
@@ -67,7 +61,7 @@ function VolumeControl({ volume, onVolumeChange, disabled = false }){
                     {getVolumeIcon()}
                 </button>
 
-                <span className="volume-valve">
+                <span className="volume-value">
                     {isMuted ? 'MUTED' : `${volumePercent}%`}
                 </span>
             </div>

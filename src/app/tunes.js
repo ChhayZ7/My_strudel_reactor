@@ -56,6 +56,7 @@ note(pick(basslines, bass))
 main_arp:
 note(pick(arpeggiator1, "<0 1 2 3>/2"))
 .sound("supersaw")
+.gain(1)
 .lpf(300)
 .adsr("0:0:.5:.1")
 .room(0.6)
@@ -67,17 +68,20 @@ note(pick(arpeggiator1, "<0 1 2 3>/2"))
 drums:
 stack(
   s("tech:5")
+  .gain(1)
   .postgain(6)
   .pcurve(2)
   .pdec(1)
   .struct(pick(drum_structure, pattern)),
 
   s("sh").struct("[x!3 ~!2 x!10 ~]")
+  .gain(1)
   .postgain(0.5).lpf(7000)
   .bank("RolandTR808")
   .speed(0.8).jux(rev).room(sine.range(0.1,0.4)).gain(0.6),
 
   s("{~ ~ rim ~ cp ~ rim cp ~!2 rim ~ cp ~ < rim ~ >!2}%8 *2")
+  .gain(1)
   .bank("[KorgDDM110, OberheimDmx]").speed(1.2)
   .postgain(.25),
 )
