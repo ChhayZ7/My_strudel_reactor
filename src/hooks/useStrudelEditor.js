@@ -7,6 +7,7 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { drawPianoroll } from '@strudel/draw';
+import console_monkey_patch, { subscribe, unsubscribe } from "../console-monkey-patch";
 
 /**
  * Custom React hook that sets up and controls a Strudle editor instance
@@ -22,8 +23,19 @@ export function useStrudelEditor(options = {}){
     // References for the editor mount point and Strudel instance
     const mountRef = useRef(null);
     const editorRef = useRef(null);
+    const d3DataRef = useRef([]);
     const [ready, setReady] = useState(false);
 
+    useEffect(() => {
+        console_monkey_patch()
+        const handleD3Data = (event) => {
+            // console.log(event.detail)
+            console.log("D3Data Handled!")
+            d3DataRef.current = event.detail;
+        };
+        subscribe('d3Data', handleD3Data)
+        return () => unsubscribe('d3Data', handleD3Data)
+    }, [])
     useEffect(() => {
         let cancelled = false;
         (async () => {
@@ -44,12 +56,6 @@ export function useStrudelEditor(options = {}){
                 transpiler,
                 root: mountRef.current,
                 drawTime,
-                onDraw:  (haps, time) => drawPianoroll({
-                    haps,
-                    time,
-                    ctx: drawCtx,
-                    drawTime,
-                    fold: 0 }),
                 prebake: async () => {
                     initAudioOnFirstClick();
                     // Load Strudel modules into the eval scope

@@ -18,10 +18,8 @@ import {
   loadProjectFromFile
  } from '../utils/strudelProjectManaging';
 import VolumeControl from '../components/volumeControl';
+import D3Visualiser from '../components/d3Visualiser';
 
-const handleD3Data = (event) => {
-  console.log(event.detail);
-};
 
 export default function App(){
   const canvasRef = useRef(null);
@@ -258,6 +256,24 @@ export default function App(){
     // Example: after: PartStates = { bass: "on", drums: "hush", arp: "on" }
     }, [detectedParts]);
 
+    // This useEffect listen for d3Data events
+    // useEffect(() => {
+    //   const handleD3Data = (event) => {
+    //     const hapData = event.detail; // Array of hap strings
+    //     console.log('Received hap data:', hapData);
+    //     // Process and visualise this data
+    //     // updateVisualisation(hapData);
+    //   };
+
+    //   // Subscribe to the d3Data event
+    //   document.addEventListener("d3Data", handleD3Data);
+
+    //   // Cleanup on unmount
+    //   return () => {
+    //     document.removeEventListener("d3Data", handleD3Data);
+    //   }
+    // }, []);
+
   // Render UI layout
   return (
     <div>
@@ -391,7 +407,8 @@ export default function App(){
       <div className="col-12">
         <div className="canvas-container">
         {/* <canvas ref={canvasRef}></canvas> */}
-        🎵 Strudel Visualization Canvas  🎵 (TBA)
+        {/* 🎵 Strudel Visualization Canvas  🎵 (TBA) */}
+          <D3Visualiser/>
         </div>
       </div>
     </div>

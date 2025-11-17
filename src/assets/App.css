@@ -362,7 +362,7 @@ button.disabled{
   opacity: 0.4;
 }
 
-.canvas-container {
+/* .canvas-container {
   width: 100%;
   height: 250px;
   background: linear-gradient(180deg, var(--dark-bg) 0%, var(--input-bg) 100%);
@@ -375,7 +375,7 @@ button.disabled{
   justify-content: center;
   color: var(--neon-cyan);
   font-size: 1.5rem;
-}
+} */
 
 .accordion {
   --bs-accordion-color: var(--text-primary);

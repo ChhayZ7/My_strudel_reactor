@@ -51,6 +51,7 @@ note(pick(basslines, bass))
 .lpf(700)
 .room(0.4)
 .postgain(pick(gain_patterns, pattern))
+.log()
 </part:bassline>
 
 <part:arp>
