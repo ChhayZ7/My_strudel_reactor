@@ -97,7 +97,7 @@ export default function App(){
       stop();
 
       setTimeout(() => {
-        const newProcessed = preprocess(rawText, newStates, volume);
+        const newProcessed = preprocess(rawText, newStates);
         setCode(newProcessed);
         setTimeout(() => {
           evaluate();
@@ -107,7 +107,7 @@ export default function App(){
     }
     return newStates;
   });
-  }, [isStarted, stop, setCode, evaluate, rawText, volume]);
+  }, [isStarted, stop, setCode, evaluate, rawText]);
 
   // Handle BPM changes for tempo control
   const handleBpmChange = useCallback((newBpm) => {
@@ -122,7 +122,7 @@ export default function App(){
     if(isStarted()){
       isUpdatingRef.current = true;
       stop();
-      const processedWithNewTempo = preprocess(updatedCode, partStates, volume);
+      const processedWithNewTempo = preprocess(updatedCode, partStates);
       setTimeout(() => {
         setCode(processedWithNewTempo);
         setTimeout(() => {
@@ -133,7 +133,7 @@ export default function App(){
     }
     return updatedCode;
   })
-  }, [partStates, setCode, isStarted, stop, evaluate, volume]);
+  }, [partStates, setCode, isStarted, stop, evaluate]);
 
   // Handles saving current project to JSON file
   const handleSaveProject = useCallback(() => {
