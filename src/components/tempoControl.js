@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect} from "react";
 
 // A tempo control component for setting BPM with input and preset buttons
-function TempoControl({ bpm, onBpmChange, disabled = false }){
+function TempoControl({ bpm, onBpmChange, disabled = false, showToast }){
     const [activeInput, setActiveInput] = useState('bpm');
 
     const [localBpm, setLocalBpm] = useState(bpm);
@@ -22,10 +22,15 @@ function TempoControl({ bpm, onBpmChange, disabled = false }){
         if (!isNaN(value) && value >= 20 && value <= 300) {
             onBpmChange(value);
         } else {
-            setLocalBpm(bpm); // Reset to current bpm if invalid
-            alert("Please enter a BPM value between 20 and 300."); // To be change to a modal
+            setLocalBpm(bpm);
+            if (showToast){
+                showToast("Please enter a BPM value between 20 and 300.");
+            } else {
+                alert("Please enter a BPM value between 20 and 300.")
+            }
+
         }
-    }, [localBpm, onBpmChange, bpm]);
+    }, [localBpm, onBpmChange, bpm, showToast]);
     
     // Increment/Decrement handlers
     const adjustBpm = useCallback((delta) => {

@@ -1054,7 +1054,91 @@ nav.d-grid {
     filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.5))
 }
 
+/* Toast Notification Styles */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
+.toast-notification {
+  background: linear-gradient(145deg, #1a1a24, #15151f);
+  border: 2px solid #2a2a3a;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7),
+  0 0 20px rgba(0, 243, 255, 0.3);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInRight 0.3s ease-out, pulse 0.5s ease-out;
+  transition: all 0.3s ease;
+}
+
+.toast-notification:hover {
+  transform: translateX(-5px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+  0 0 30px rgba(0, 243, 255, 0.5);
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  white-space: pre-line;
+}
+
+/* Alert Type Specific Styles */
+.alert-success {
+  border-color: #00ff88 !important;
+  background: linear-gradient(145deg, rgba(0, 255, 136, 0.1), #1a1a24) !important;
+}
+
+.alert-success:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+  0 0 30px rgba(0, 255, 136, 0.5) !important;
+}
+
+.alert-danger {
+  border-color: #ff006e !important;
+  background: linear-gradient(145deg, rgba(255, 0, 110, 0.1), #1a1a24) !important;
+}
+
+.alert-danger:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+  0 0 30px rgba(255, 0, 110, 0.5) !important;
+}
+
+.alert-warning {
+  border-color: #fffc00 !important;
+  background: linear-gradient(145deg, rgba(255, 252, 0, 0.1), #1a1a24) !important;
+}
+
+.alert-warning:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+  0 0 30px rgba(255, 252, 0, 0.5) !important;
+}
+
+.alert-info {
+  border-color: #00f3ff !important;
+  background: linear-gradient(145deg, rgba(0, 243, 255, 0.1), #1a1a24) !important;
+}
+
+.alert-info:hover {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+  0 0 30px rgba(0, 243, 255, 0.5) !important;
+}
 
 /* Animation for page title */
 @keyframes neon-pulse {

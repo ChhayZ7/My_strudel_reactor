@@ -17,6 +17,7 @@ import {
  } from '../utils/strudelProjectManaging';
 import VolumeControl from '../components/volumeControl';
 import D3Visualiser from '../components/d3Visualiser';
+import { ToastContainer } from '../components/toast';
 
 
 export default function App(){
@@ -28,6 +29,8 @@ export default function App(){
   const [bpm, setBpm] = useState(140); // Default BPM
   const [projectName, setProjectName] = useState("Untitled Project");
   const [volume, setVolume] = useState(1.0) // 100% volume by defualt
+  const [toasts, setToasts] = useState([]); // Toast notification state
+  const toastIdRef = useRef(0);
   const isUpdatingRef = useRef(false); // Still be tested not use if it is useful
 
   // Detect parts from raw text
@@ -44,41 +47,84 @@ export default function App(){
     return preprocess(rawText, partStates, volume);
   }, [rawText, partStates, volume]);
 
+  // Toast helper functions
+  const showToast = useCallback((message, type = 'info', duration = 5000, autoClose = true) => {
+    const id = toastIdRef.current++;
+    const newToast = { id, message, type, duration, autoClose};
+
+    setToasts(prev => [...prev, newToast]);
+
+    return id;
+  }, []);
+
+  // Handle toast dismissal
+  const dismissToast = useCallback((id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  }, [])
+
+  // Showing different type of toast based on the app response
+  const showSuccess = useCallback((message, duration = 4000) => {
+    return showToast(message, 'success', duration);
+  }, [showToast])
+
+  const showError = useCallback((message, duration = 4000) => {
+    return showToast(message, 'danger', duration);
+  }, [showToast])
+
+  const showWarning = useCallback((message, duration = 4000) => {
+    return showToast(message, 'warning', duration);
+  }, [showToast])
+
+  const showInfo = useCallback((message, duration = 4000) => {
+    return showToast(message, 'info', duration);
+  }, [showToast])
+
   // Handle preprocessing when preprocess button is clicked
   const handlePreprocess = () => {
-    if (!ready) return;
-    if(!processed.trim()) return;
+    if (!ready) {
+      showWarning("Strudel is not ready yet!\n\nPlease wait for editor to initialise")
+      return
+    };
+    if(!processed.trim()) {
+      showWarning("No code to preprocess!\n\nPlease enter some code first.")
+      return
+    };
     setCode(processed);
     setAlreadyProcessed(true)
-    console.log(alreadyProcessed)
-    console.log("Preprocessed and set code.");
+    // showSuccess("Code preprocessed successfully!");
   };
 
   // Handle preprocess and play when button is clicked
   const handleProcPlay = useCallback(() => {
-    if (!ready) return;
-    if(!processed.trim()) return;
-    console.log(processed);
+    if (!ready) {
+      showWarning("Strudel is not ready yet!\n\nPlease wait for editor to initialise")
+      return
+    };
+    if(!processed.trim()) {
+      showWarning("No code to preprocess!\n\nPlease enter some code first.")
+      return
+    };
+    // showSuccess("Tune is playing! 🎵");
     setCode(processed);
     setTimeout(() => evaluate(), 0);
-    console.log("Process and Play");
   }, [ready, processed, setCode, evaluate]);
 
   // Handle play button click
   const handlePlay = () => {
     if (!ready) {
-      alert("Strudel is not ready yet!\n\nPlease wait for the strudel editor to initialise");
-      return;
+      showWarning("Strudel is not ready yet!\n\nPlease wait for editor to initialise")
+      return
     };
 
     // Handle no code case
     if(!alreadyProcessed){
-      alert("No code loaded!\n\nPlease preprocess or load a tune first.");
-      return ;
+      showWarning("No code loaded!\n\nPlease preprocess or load a tune first.");
+      return;
     }
 
     setCode(processed);
     evaluate();
+    // showSuccess("Playing! 🎵");
   };
 
   // Handle instrument part state changes
@@ -129,6 +175,9 @@ export default function App(){
           isUpdatingRef.current = false;
         }, 50);
       }, 50);
+      // showInfo(`Tempo changed to ${newBpm.toFixed(0)} BPM`, 2000);
+    } else {
+      // showSuccess(`BPM set to ${newBpm.toFixed(0)}`, 2000);
     }
     return updatedCode;
   })
@@ -146,11 +195,10 @@ export default function App(){
 
       const filename = saveProjectToFile(project);
 
-      alert(`Project saved succesfully!\n\nFile: ${filename}`)
-      console.log("💾 Project saved:", filename);
+      showSuccess(`Project saved succesfully!\n\nFile: ${filename}`)
     } catch (error) {
       console.error("Failed to save project:", error);
-      alert(`Failed to save project:\n${error.message}`);
+      showError(`Failed to save project:\n${error.message}`);
     }
   }, [rawText, partStates, bpm, projectName]);
 
@@ -173,26 +221,22 @@ export default function App(){
       setBpm(project.settings.bpm);
       setProjectName(project.metadata.name);
 
-      console.log(`Project loaded: ${project.metadata.name}`);
-      console.log(`Parts: ${Object.keys(project.partStates).length}`);
-      console.log(`BPM: ${project.settings.bpm}`);
-
       // Show success notification
-      alert(
+      showSuccess(
         `✅ Project loaded successfully!\n\n` +
         `Name: ${project.metadata.name}\n` +
         `Parts: ${Object.keys(project.partStates).length}\n` +
         `BPM: ${project.settings.bpm}\n\n` +
-        `Click "Proc & Play" to start playback.`
+        `Click "Proc & Play" to start playback.`,
+        6000
       );
     } catch (error) {
-      console.error("Failed to load project:", error);
-      alert(`❌ Failed to load project:\n\n${error.message}`);
+      showError(`❌ Failed to load project:\n\n${error.message}`);
     }
 
     // Reset file input
     event.target.value = '';
-  }, [isStarted, stop]);
+  }, [isStarted, stop, showSuccess, showError]);
 
   // Handle volume change
   const handleVolumeChange = useCallback((newVolume) => {
@@ -211,6 +255,9 @@ export default function App(){
           isUpdatingRef.current = false;
         }, 50);
       }, 50);
+
+      // const volumePercent = Math.round(newVolume * 100);
+      // showInfo(`Volume: ${volumePercent}%`, 2000);
     }
   }, [isStarted, stop, rawText, partStates, setCode, evaluate]);
 
@@ -219,11 +266,9 @@ export default function App(){
     const match = rawText.match(/setcps\(([^)]+)\)/);
     if(match){
       const cpsValue = eval(match[1]);
-      console.log("Extracted CPS:", cpsValue);
       if(!isNaN(cpsValue)){
         const extractedBpm = cpsValue * 60 *4; // Convert CPS back to BPM
         if (Math.abs(extractedBpm - bpm) > 0.1){ // Avoid unnecessary updates when BPM changes is too small
-          console.log("Updating BPM to:", extractedBpm);
           setBpm(extractedBpm);
       }
     }
@@ -260,7 +305,10 @@ export default function App(){
   // Render UI layout
   return (
     <div>
-    <h2 className='app-title'>🎵 Strudle Demo By Kimchhay Leng</h2>
+    <h2 className='app-title'>🎵 Musix By Kimchhay Leng</h2>
+
+    {/* Toast Container for notifications */}
+    <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
     {!ready && (
       <div className="alert alert-info">
@@ -333,6 +381,7 @@ export default function App(){
                       bpm={bpm}
                       onBpmChange={handleBpmChange}
                       disabled={!ready}
+                      showToast={showWarning}
                     />
                   </div>
                 </div>
