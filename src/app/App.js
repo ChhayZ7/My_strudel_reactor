@@ -1,14 +1,12 @@
 import '../assets/cors-redirect';
 import '../assets/App.css';
-import '../assets/Component.css';
-import { useEffect, useRef, useMemo, useState, useCallback, use } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { useStrudelEditor } from "../hooks/useStrudelEditor"
 import { stranger_tune } from './tunes';
 import PreprocessInput from '../components/preprocessInput';
 import Transport from '../components/transport';
 import EditorPane from '../components/editorPane';
 import PartControls from '../components/partControls'
-import console_monkey_patch, { getD3Data } from '../console-monkey-patch';
 import { detectParts, preprocess } from '../utils/strudelPreprocessing';
 import TempoControl from '../components/tempoControl';
 import ProjectManager from '../components/projectManager';
@@ -24,6 +22,7 @@ import D3Visualiser from '../components/d3Visualiser';
 export default function App(){
   const canvasRef = useRef(null);
   const [rawText, setRawText] = useState("");
+  const [alreadyProcessed, setAlreadyProcessed] = useState(false);
   const [partStates, setPartStates] = useState({});
   // Example: partStates = { 'arp': 'on', 'bass': 'hush' }
   const [bpm, setBpm] = useState(140); // Default BPM
@@ -35,7 +34,7 @@ export default function App(){
   const detectedParts = useMemo(() => detectParts(rawText), [rawText]);
 
   // Use and expose Strudel editor controls
-  const { mountRef, ready, setCode, evaluate, stop, hasCode, isStarted } = useStrudelEditor({
+  const { mountRef, ready, setCode, evaluate, stop, isStarted } = useStrudelEditor({
     canvasRef,
     drawTime: [-2, 2],
   });
@@ -46,13 +45,14 @@ export default function App(){
   }, [rawText, partStates, volume]);
 
   // Handle preprocessing when preprocess button is clicked
-  const handlePreprocess = useCallback(() => {
+  const handlePreprocess = () => {
     if (!ready) return;
     if(!processed.trim()) return;
     setCode(processed);
-    // setCodeLoaded(true);
+    setAlreadyProcessed(true)
+    console.log(alreadyProcessed)
     console.log("Preprocessed and set code.");
-  }, [ready, processed, setCode]);
+  };
 
   // Handle preprocess and play when button is clicked
   const handleProcPlay = useCallback(() => {
@@ -65,20 +65,21 @@ export default function App(){
   }, [ready, processed, setCode, evaluate]);
 
   // Handle play button click
-  const handlePlay = useCallback(() => {
+  const handlePlay = () => {
     if (!ready) {
       alert("Strudel is not ready yet!\n\nPlease wait for the strudel editor to initialise");
       return;
     };
 
     // Handle no code case
-    if(!hasCode()){
+    if(!alreadyProcessed){
       alert("No code loaded!\n\nPlease preprocess or load a tune first.");
       return ;
     }
 
+    setCode(processed);
     evaluate();
-  }, [ready, evaluate]);
+  };
 
   // Handle instrument part state changes
   const handlePartStateChange = useCallback((partName, newState) => {
@@ -227,14 +228,14 @@ export default function App(){
       }
     }
   }
-}, [rawText]);
+}, [rawText, bpm]);
 
   // Initialize raw text with default tune if empty
   useEffect(() => {
     if (!ready) return;
 
     if (rawText === "") setRawText(prev => (prev === "" ? stranger_tune : prev));
-  }, [ready, rawText]);
+  }, [ready]);
 
   // Update part states when detected parts change
   useEffect(() => {
@@ -254,25 +255,7 @@ export default function App(){
     }
 
     // Example: after: PartStates = { bass: "on", drums: "hush", arp: "on" }
-    }, [detectedParts]);
-
-    // This useEffect listen for d3Data events
-    // useEffect(() => {
-    //   const handleD3Data = (event) => {
-    //     const hapData = event.detail; // Array of hap strings
-    //     console.log('Received hap data:', hapData);
-    //     // Process and visualise this data
-    //     // updateVisualisation(hapData);
-    //   };
-
-    //   // Subscribe to the d3Data event
-    //   document.addEventListener("d3Data", handleD3Data);
-
-    //   // Cleanup on unmount
-    //   return () => {
-    //     document.removeEventListener("d3Data", handleD3Data);
-    //   }
-    // }, []);
+    }, [detectedParts, partStates]);
 
   // Render UI layout
   return (
@@ -287,7 +270,7 @@ export default function App(){
     <main className="container-fluid">
       {/* Main Layout: Code Editor (Left) | Controls (Right) */}
       <div className="row g-2">
-        <div class="col-md-8">
+        <div className="col-md-8">
           <div className="panel editor-pane">
             <PreprocessInput value={rawText} onChange={setRawText}/>
           </div>
@@ -396,22 +379,37 @@ export default function App(){
               </div>
             </div>
           </div>
+            {/* Button & Modal for cutoff frequency graph */}
+            <div className="panel mb-2">
+              {/* Button */}
+              <nav className="d-grid">
+                <button
+                  type="button"  
+                  data-bs-toggle="modal" 
+                  data-bs-target="#cutoffFrequencyGraph"
+                  className='btn btn-outline-primary'
+                >
+                  📊 Cutoff Frequency Graph
+                </button>
+              </nav>
 
-
-
-
+          </div>
         </div>
       </div>
-    {/* Third Row: Visualization Canvas (TBA) */}
-    <div className="row mt-3">
-      <div className="col-12">
-        <div className="canvas-container">
-        {/* <canvas ref={canvasRef}></canvas> */}
-        {/* 🎵 Strudel Visualization Canvas  🎵 (TBA) */}
-          <D3Visualiser/>
+      {/* Modal */}
+      <div className="modal fade" id="cutoffFrequencyGraph" tabIndex="-1" aria-labelledby="cutoffFrequencyGraphLabel" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h6 className="modal-title fs-5" id="exampleModalLabel">📊 Cutoff Frequency Graph</h6>
+              <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body panel">
+              <D3Visualiser/>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
     </main>
   </div>
   )
